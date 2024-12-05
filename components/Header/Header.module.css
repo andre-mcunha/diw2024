@@ -2,7 +2,7 @@
     padding: 20px;
 
     background: none;
-    color: white;
+    color: black;
     font-weight:bold;
   }
   
@@ -23,7 +23,7 @@
   
   .nav a {
     text-decoration: none;
-    color: white;
+    color: black;
   }
   
   .nav a:hover {
