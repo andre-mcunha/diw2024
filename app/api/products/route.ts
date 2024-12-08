@@ -1,5 +1,5 @@
-export async function GET() {
-    return fetch('https://deisishop.pythonanywhere.com/products')
-    .then(res => res.json())
-    .then(data => Response.json(data))
+export async function GET() { 
+    const result = await fetch("https://deisishop.pythonanywhere.com/products/")
+    const data = await result.json()
+    return Response.json(data)
 }

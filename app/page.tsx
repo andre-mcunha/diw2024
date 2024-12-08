@@ -1,24 +1,37 @@
 'use client';
 
-import React from 'react'
+import React from 'react';
 import useSWR from 'swr';
-import { Product } from "@/app/models/interfaces"
+import { Product } from './models/interfaces';
+import ProductCard from './components/ProductCard/ProductCard';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-
-export default function page() {
-  
-  const { data, error, isLoading } = useSWR<Product[]>('/api/products', fetcher);
+export default function Page() {
+  const { data, error } = useSWR<Product, Error>('/api/products', fetcher);
 
   // Validação dos estados de erro ou carregamento
   if (error) return <div>Failed to load</div>;
-  if (isLoading) return <div>Loading...</div>;
-  if (!data) return <div>No data available</div>;
+  if (!data) return <div>Loading...</div>;
 
-  return <>
-  <h1>Hello World!</h1>
-  <p>Bem vindos á minha primeira app desenvolvida em React e Next.js.</p>
-  </>
-  
+
+  // Verifica se os dados têm o formato esperado
+  if (!Array.isArray(data)) {
+    console.error('Invalid data format:', data);
+    return <div>Invalid data</div>;
+  }
+
+  return (
+    <>
+      {data.map((prod) => (
+        <ProductCard
+          key={prod.id} // Garante que `id` é único
+          title={prod.title}
+          price={prod.price}
+          description={prod.description}
+          imgSrc={prod.image}
+        />
+      ))}
+    </>
+  );
 }
