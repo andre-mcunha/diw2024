@@ -18,8 +18,10 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".", // Define a raiz do projeto como base
     "paths": {
-      "@/*": ["./*"]
+      "@app/*": ["app/*"], // Alias para a pasta "app"
+      "@/*": ["./*"] // Alias para outras pastas na raiz do projeto
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

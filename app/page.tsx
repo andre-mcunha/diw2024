@@ -25,7 +25,7 @@ export default function Page() {
     <>
       {data.map((prod) => (
         <ProductCard
-          key={prod.id} // Garante que `id` é único
+          key={prod.id}
           title={prod.title}
           price={prod.price}
           description={prod.description}

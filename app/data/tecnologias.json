@@ -1,0 +1,20 @@
+[
+  {
+    "title": "HTML",
+    "image": "https://cdn.pixabay.com/photo/2018/05/08/21/37/html5-3384039_1280.png",
+    "description": "A linguagem de marcação para construção de páginas web.",
+    "rating": 5
+  },
+  {
+    "title": "CSS",
+    "image": "https://cdn.pixabay.com/photo/2022/03/21/21/44/file-7084005_1280.png",
+    "description": "Usada para estilizar páginas web.",
+    "rating": 4
+  },
+  {
+    "title": "JavaScript",
+    "image": "https://cdn.pixabay.com/photo/2015/04/23/17/41/javascript-736400_1280.png",
+    "description": "A linguagem de programação para a web.",
+    "rating": 5
+  }
+]
