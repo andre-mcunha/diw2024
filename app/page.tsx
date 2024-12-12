@@ -22,7 +22,17 @@ export default function Page() {
   }
 
   return (
-    <>
+    <div>
+    <div className="search-container">
+          <label htmlFor="procurar">Filtros</label>
+          <input
+            id="search"
+            type="text"
+            placeholder="Search"
+          />
+          </div>
+
+    <div className='product-grid'>
       {data.map((prod) => (
         <ProductCard
           key={prod.id}
@@ -32,6 +42,7 @@ export default function Page() {
           imgSrc={prod.image}
         />
       ))}
-    </>
+    </div>
+    </div>
   );
 }
