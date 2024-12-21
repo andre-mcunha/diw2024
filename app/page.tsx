@@ -10,7 +10,6 @@ export default function Page() {
   const [search, setSearch] = useState('');
   const [cart, setCart] = useState<Product[]>([]);
 
-  // Carrega o carrinho do localStorage ao montar o componente
   useEffect(() => {
     const storedCart = localStorage.getItem('cart');
     if (storedCart) {
@@ -18,7 +17,6 @@ export default function Page() {
     }
   }, []);
 
-  // Sincroniza o carrinho com o localStorage sempre que ele for alterado
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
@@ -31,10 +29,47 @@ export default function Page() {
     setCart((prevCart) => prevCart.filter((product) => product.id !== productId));
   };
 
+  const buy = () => {
+    const isEstudante = (
+      document.querySelector('input[name="estudante_deisi"]') as HTMLInputElement
+    )?.checked || false;
+  
+    const cupao = (
+      document.getElementById('cupao') as HTMLInputElement
+    )?.value || '';
+  
+    const body = {
+      products: cart.map((product) => product.id),
+      name: '',
+      coupon: cupao,
+    };
+  
+    fetch('/api/deisishop/buy', {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        }
+        return response.json();
+      })
+      .then((response) => {
+        console.log('Compra realizada com sucesso:', response);
+        setCart([]);
+      })
+      .catch(() => {
+        console.error('Erro ao processar a compra');
+      });
+  };
+  
+
   if (error) return <div>Failed to load</div>;
   if (!data) return <div>Loading...</div>;
 
-  // Filtra os produtos com base na busca
   const filteredProducts = data.filter((prod) =>
     prod.title.toLowerCase().includes(search.toLowerCase())
   );
@@ -64,7 +99,7 @@ export default function Page() {
       </div>
 
       <h2>Carrinho</h2>
-      <div className="product-grid cart-grid dark-yellow-background">
+      <div className="product-grid cart-grid">
         {cart.map((item) => (
           <div key={item.id} className="product-card">
             <img src={item.image} alt={item.title} />
@@ -75,8 +110,19 @@ export default function Page() {
         ))}
       </div>
       <p>
-  Total: {cart.reduce((total, item) => total + Number(item.price), 0).toFixed(2)} €
-</p>
+        Total: {cart.reduce((total, item) => total + Number(item.price), 0).toFixed(2)} €
+      </p>
+
+      <section id="menu-compra">
+        <p>
+          És estudante do DEISI?
+          <input type="checkbox" name="estudante_deisi" value="sim" />
+        </p>
+        <p>
+          Cupão de desconto: <input type="text" id="cupao" />
+        </p>
+        <button onClick={buy}>Comprar</button>
+      </section>
     </div>
   );
 }
