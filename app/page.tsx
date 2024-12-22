@@ -3,12 +3,16 @@
 import React, { useState, useEffect } from 'react';
 import useSWR from 'swr';
 import { Product } from './models/interfaces';
+import ProductCard from './components/cardProduto/ProductCard';
+
 
 export default function Page() {
   const fetcher = (url: string) => fetch(url).then((res) => res.json());
   const { data, error } = useSWR<Product[]>('/api/products', fetcher);
   const [search, setSearch] = useState('');
   const [cart, setCart] = useState<Product[]>([]);
+  const [postResponse, setPostResponse] = useState<string | null>(null);
+
 
   useEffect(() => {
     const storedCart = localStorage.getItem('cart');
@@ -38,13 +42,21 @@ export default function Page() {
       document.getElementById('cupao') as HTMLInputElement
     )?.value || '';
   
+    const nomeCliente = prompt("Digite o seu nome para concluir a compra:");
+  
+    if (!nomeCliente) {
+      alert("O nome é obrigatório para concluir a compra.");
+      return;
+    }
+  
     const body = {
-      products: cart.map((product) => product.id),
-      name: '',
-      coupon: cupao,
+      products: cart.map((product) => product.id), 
+      student: isEstudante, 
+      coupon: cupao, 
+      name: nomeCliente, 
     };
   
-    fetch('/api/deisishop/buy', {
+    fetch('/api/products/deisishop/buy', {
       method: 'POST',
       body: JSON.stringify(body),
       headers: {
@@ -53,18 +65,29 @@ export default function Page() {
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error(response.statusText);
+          return response.json().then((data) => {
+            throw new Error(data.error || "Erro desconhecido");
+          });
         }
         return response.json();
       })
       .then((response) => {
-        console.log('Compra realizada com sucesso:', response);
-        setCart([]);
+        setPostResponse(
+          `Compra realizada com sucesso!\n
+          ${response.message}\n
+          ${response.address}\n
+          Total: ${response.totalCost} €\n
+          Referência de pagamento: ${response.reference}`
+        );
+        
+        setCart([]); 
       })
-      .catch(() => {
-        console.error('Erro ao processar a compra');
+      .catch((error) => {
+        setPostResponse(`Erro ao processar a compra: ${error.message}`);
       });
   };
+  
+  
   
 
   if (error) return <div>Failed to load</div>;
@@ -85,44 +108,60 @@ export default function Page() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
-
+  
       <div className="product-grid">
-        {filteredProducts.map((product) => (
-          <div key={product.id} className="product-card">
-            <img src={product.image} alt={product.title} />
-            <h3>{product.title}</h3>
-            <p>{product.description}</p>
-            <p>{product.price} €</p>
-            <button onClick={() => addToCart(product)}>+ Adicionar ao Carrinho</button>
-          </div>
-        ))}
-      </div>
+  {filteredProducts.map((product) => (
+    <ProductCard
+      key={product.id}
+      title={product.title}
+      price={product.price}
+      description={product.description}
+      imgSrc={product.image}
+      buttonLabel="+ Adicionar ao Carrinho"
+      buttonAction={() => addToCart(product)}
+      showDescription={true}
+    />
+  ))}
+</div>
 
-      <h2>Carrinho</h2>
-      <div className="product-grid cart-grid">
-        {cart.map((item) => (
-          <div key={item.id} className="product-card">
-            <img src={item.image} alt={item.title} />
-            <h3>{item.title}</h3>
-            <p>{item.price} €</p>
-            <button onClick={() => removeFromCart(item.id)}>- Remover</button>
-          </div>
-        ))}
-      </div>
+<h2>Carrinho</h2>
+<div className="product-grid cart-grid">
+  {cart.map((item) => (
+    <ProductCard
+      key={item.id}
+      title={item.title}
+      price={item.price}
+      description={item.description}
+      imgSrc={item.image}
+      buttonLabel="- Remover"
+      buttonAction={() => removeFromCart(item.id)}
+      showDescription={false}
+    />
+  ))}
+</div>
       <p>
         Total: {cart.reduce((total, item) => total + Number(item.price), 0).toFixed(2)} €
       </p>
-
+  
       <section id="menu-compra">
-        <p>
-          És estudante do DEISI?
-          <input type="checkbox" name="estudante_deisi" value="sim" />
-        </p>
-        <p>
-          Cupão de desconto: <input type="text" id="cupao" />
-        </p>
-        <button onClick={buy}>Comprar</button>
-      </section>
+  <p>
+    És estudante do DEISI?
+    <input type="checkbox" name="estudante_deisi" value="sim" />
+  </p>
+  <p>
+    Cupão de desconto: <input type="text" id="cupao" />
+  </p>
+  <button id='botao-comprar' onClick={buy}>Comprar</button>
+  
+  {postResponse &&
+  postResponse.split("\n").map((line, index) => (
+    <p key={index} className="post-response">
+      {line}
+    </p>
+  ))}
+
+</section>
+
     </div>
   );
 }
