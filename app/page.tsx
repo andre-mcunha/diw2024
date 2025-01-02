@@ -124,7 +124,7 @@ export default function Page() {
   ))}
 </div>
 
-<h2>Carrinho</h2>
+<h1>Carrinho</h1>
 <div className="product-grid cart-grid">
   {cart.map((item) => (
     <ProductCard
