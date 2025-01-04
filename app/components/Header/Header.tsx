@@ -8,6 +8,8 @@ export default function Header() {
     <h1>DEISI Shop</h1>
     <nav className={styles.nav}>
         <Link href="/">Home --</Link>
+        <Link href="/tecnologias">Ratings --</Link>
+        <Link href="/produtos">DEISI Shop --</Link>
     </nav>
     </header>
   )

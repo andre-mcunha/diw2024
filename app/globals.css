@@ -15,7 +15,7 @@ body {
 }
 
 main {
-  width: 100%;
+  width: 97%;
   height: 850px;
   padding: 20px;
   border-radius: 20px;
@@ -23,7 +23,7 @@ main {
   background: whitesmoke;
 }
 
-.product-grid {
+.product-grid, .cards-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
